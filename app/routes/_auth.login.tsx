@@ -9,7 +9,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function action({}: ActionFunctionArgs) {
-    const response = await api.post(endpoints.oauth_redirect("x"));
+    const response = await api.get(endpoints.oauth_redirect("x"));
     if (response.status != 200) {
         return json({ error: "Login failed" }, { status: response.status });
     }
