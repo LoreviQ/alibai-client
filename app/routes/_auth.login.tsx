@@ -1,9 +1,20 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
+import type { MetaFunction, ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { Form, Link, redirect } from "@remix-run/react";
+
+import { api, endpoints } from "./../utils/api";
 
 export const meta: MetaFunction = () => {
     return [{ title: "Login - AlibAI" }, { name: "description", content: "Login to AlibAI" }];
 };
+
+export async function action({}: ActionFunctionArgs) {
+    const response = await api.post(endpoints.oauth_redirect("x"));
+    if (response.status != 200) {
+        return json({ error: "Login failed" }, { status: response.status });
+    }
+    return redirect(response.data.authorization_url);
+}
 
 export default function Login() {
     return (
@@ -17,13 +28,15 @@ export default function Login() {
             <div className="bg-theme-light p-8 rounded-xl shadow-xl w-full max-w-md">
                 <h2 className="text-2xl font-bold text-theme-dark text-center mb-8">Welcome Back</h2>
                 <div className="space-y-4">
-                    <button
-                        onClick={() => {}}
-                        className="w-full bg-black text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-3 hover:bg-neutral-800 transition-colors"
-                    >
-                        <XIcon />
-                        Continue with X
-                    </button>
+                    <Form action="/login" method="POST">
+                        <button
+                            type="submit"
+                            className="w-full bg-black text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-3 hover:bg-neutral-800 transition-colors"
+                        >
+                            <XIcon />
+                            Continue with X
+                        </button>
+                    </Form>
                     <button
                         onClick={() => alert("Not yet implemented - LinkedIn login coming soon!")}
                         className="w-full bg-[#0A66C2] text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-3 hover:bg-[#004182] transition-colors"
