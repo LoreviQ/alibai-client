@@ -1,5 +1,7 @@
 import { LoaderFunction, redirect } from "@remix-run/node";
 import { api, endpoints } from "~/utils/api";
+import { authCookie } from "~/utils/cookies";
+import type { AuthCookie } from "~/utils/cookies";
 
 export const loader: LoaderFunction = async ({ request }) => {
     // Get URL parameters
@@ -18,11 +20,21 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     try {
         // Send OAuth data to backend
-        await api.post(endpoints.oauth_callback("twitter"), {
+        const response = await api.post(endpoints.oauth_callback("twitter"), {
             state,
             code,
         });
-        return redirect("/app");
+        const { userId, username } = response.data;
+        let cookie: AuthCookie = {
+            userId,
+            username,
+            authenticated: true,
+        };
+        return redirect("/app", {
+            headers: {
+                "Set-Cookie": await authCookie.serialize(cookie),
+            },
+        });
     } catch (error) {
         // Handle API errors
         console.error("OAuth callback error:", error);
