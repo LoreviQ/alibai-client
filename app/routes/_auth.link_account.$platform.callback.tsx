@@ -19,11 +19,22 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
 
     try {
+        // Log the request details
+        console.log("Attempting OAuth callback with:", {
+            state,
+            code,
+            endpoint: endpoints.oauth_callback("x"),
+        });
+
         // Send OAuth data to backend
         const response = await api.post(endpoints.oauth_callback("x"), {
             code,
             state,
         });
+
+        // Log the response
+        console.log("API Response:", response.data);
+
         const { userid, username } = response.data;
         let cookie: AuthCookie = {
             userid,
@@ -35,9 +46,14 @@ export const loader: LoaderFunction = async ({ request }) => {
                 "Set-Cookie": await authCookie.serialize(cookie),
             },
         });
-    } catch (error) {
-        // Handle API errors
-        console.error("OAuth callback error:", error);
+    } catch (error: any) {
+        // More detailed error logging
+        console.error("OAuth callback error details:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            endpoint: endpoints.oauth_callback("x"),
+        });
         throw new Response("Failed to complete authentication", { status: 500 });
     }
 };
