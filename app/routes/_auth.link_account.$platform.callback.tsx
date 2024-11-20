@@ -21,12 +21,12 @@ export const loader: LoaderFunction = async ({ request }) => {
     try {
         // Send OAuth data to backend
         const response = await api.post(endpoints.oauth_callback("twitter"), {
-            state,
             code,
+            state,
         });
-        const { userId, username } = response.data;
+        const { userid, username } = response.data;
         let cookie: AuthCookie = {
-            userId,
+            userid,
             username,
             authenticated: true,
         };

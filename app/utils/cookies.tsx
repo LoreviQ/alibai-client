@@ -9,7 +9,7 @@ export const authCookie = createCookie("auth", {
 });
 
 export type AuthCookie = {
-    userId: string;
+    userid: string;
     username: string;
     authenticated: boolean;
 };
