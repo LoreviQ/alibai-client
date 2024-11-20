@@ -20,7 +20,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
     try {
         // Send OAuth data to backend
-        const response = await api.post(endpoints.oauth_callback("twitter"), {
+        const response = await api.post(endpoints.oauth_callback("x"), {
             code,
             state,
         });
